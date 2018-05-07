@@ -3,7 +3,6 @@ The Powergrid Model Data Manager API allows you to query the powergrid model dat
 Query_Model_names – Returns list of names for all available models.  Allowed parameter is:
 -	Result Format – XML/JSON/CSV, Will return results as a list in the format selected.
 Example Request:
-
 ::
 	{
 		"requestType": "QUERY_MODEL_NAMES",
@@ -53,7 +52,6 @@ QUERY_OBJECT – Returns details for a particular object based on the object Id
 -	objectID – ID of the object you wish to return details for.
 -	resultFormat – XML/JSON ,  Will return result bindings based on the select part of the query string.
 Example Request:
-
 ::
 	{
 		"requestType": "QUERY_OBJECT",
@@ -64,7 +62,6 @@ Query_Object_Types – Returns the available object types in the model
 -	modelId (optional) - when specified it searches against that model, if empty it will search against all models
 -	resultFormat – XML/JSON /CSV,  Will return results as a list in the format selected.
 Example Request:
-
 ::
 	{
 		"requestType": "QUERY_OBJECT_TYPES",
@@ -77,7 +74,6 @@ QUERY_MODEL – Returns all or part of the specified model.  Can be filtered by 
 -	filter – SPARQL formatted filter string
 -	resultFormat – XML/JSON,  Will return result in the format selected.
 Example Request:
-
 ::
 	{
 		"requestType": "QUERY_MODEL",
