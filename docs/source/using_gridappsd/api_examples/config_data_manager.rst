@@ -6,7 +6,12 @@ Request all GridLAB-D configuration files
 Required: configurationType, parameters[model_id,directory,simulationname,simulation_start_time,simulation_duration,simulation_id,simulation_broker_host,simulation_broker_port]
 Optional: parameters[i_fraction, p_fraction, z_fraction, load_scaling_factor, schedule_name,solver_method]
 Request: goss.gridappsd.process.request.config
-{"configurationType":"GridLAB-D All","parameters":{"load_scaling_factor":"1.0","i_fraction":"1.0","model_id":"_4F76A5F9-271D-9EB8-5E31-AA362D86F2C3","p_fraction":"0.0","simulation_id":"12345","z_fraction":"0.0","simulation_broker_host":"localhost","simulation_name":"ieee8500","simulation_duration":"60","simulation_start_time":"2018-02-18 00:00:00","solver_method":"NR","schedule_name":"ieeezipload","simulation_broker_port":"61616","directory":"/tmp/gridlabdsimulation/"}}
+::
+  {
+  "configurationType":"GridLAB-D All",
+  "parameters":
+    {"load_scaling_factor":"1.0","i_fraction":"1.0","model_id":"_4F76A5F9-271D-9EB8-5E31-AA362D86F2C3","p_fraction":"0.0","simulation_id":"12345","z_fraction":"0.0","simulation_broker_host":"localhost","simulation_name":"ieee8500","simulation_duration":"60","simulation_start_time":"2018-02-18 00:00:00","solver_method":"NR","schedule_name":"ieeezipload","simulation_broker_port":"61616","directory":"/tmp/gridlabdsimulation/"}
+   }
 
 Response:
 <directory where files have been stored>
