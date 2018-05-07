@@ -2,7 +2,8 @@
 
 
 
-Request all GridLAB-D configuration files
+**Request all GridLAB-D configuration files**
+
 Required: configurationType, parameters[model_id,directory,simulationname,simulation_start_time,simulation_duration,simulation_id,simulation_broker_host,simulation_broker_port]
 Optional: parameters[i_fraction, p_fraction, z_fraction, load_scaling_factor, schedule_name,solver_method]
 Request: goss.gridappsd.process.request.config
@@ -17,7 +18,8 @@ Response:
 <directory where files have been stored>
   
   
-Request GridLAB-D base file
+**Request GridLAB-D base file**
+
 Required: configurationType, parameters[model_id]
 Optional: parameters[i_fraction, p_fraction, z_fraction, load_scaling_factor, schedule_name]
 Request:  goss.gridappsd.process.request.config
@@ -32,7 +34,8 @@ Response:
     Control MANUAL; // OUTPUT_VOLTAGE;
   …………
 
-Request GridLAB-D symbols file
+**Request GridLAB-D symbols file**
+
 Required: configurationType, parameters[model_id]
 Request:  goss.gridappsd.process.request.config
 ::
@@ -48,7 +51,8 @@ Response:
   ……………
 
 
-Request CIM Dictionary file
+**Request CIM Dictionary file**
+
 Required: configurationType, parameters[model_id]
 Request: goss.gridappsd.process.request.config
 ::
@@ -85,7 +89,8 @@ Response:
   ]
   }]}
 
-Request CIM Feeder Index file
+**Request CIM Feeder Index file**
+
 Required: configurationType, parameters[model_id]
 Request: goss.gridappsd.process.request.config
 ::
@@ -99,7 +104,8 @@ Response:
   …
   ]}
 
-Request Simulation Output Configuration file
+**Request Simulation Output Configuration file**
+
 Required: configurationType, parameters[model_id]
 Request: goss.gridappsd.process.request.config
 ::
