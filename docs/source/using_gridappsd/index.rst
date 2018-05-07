@@ -23,6 +23,17 @@ GridAPPS-D communicates over a publish subscribe architecture implemented in Act
 .. include:: api_examples/starting_in_websockets.rst
 .. include:: api_examples/starting_in_python.rst
 
+
+Query for Powergrid Model information
+-----------------------------
+.. include:: api_examples/pg_data_manager.rst
+
+Retrieve Specific Configurations
+-----------------------------
+.. include:: api_examples/config_data_manager.rst
+
+
+
 Starting Simulation Using Viz Application
 -----------------------------------------
 
