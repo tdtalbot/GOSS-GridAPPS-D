@@ -30,6 +30,7 @@ import com.northconcepts.exception.SystemException;
 
 import gov.pnnl.goss.gridappsd.configuration.GLDBaseConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.GLDSimulationOutputConfigurationHandler;
+import gov.pnnl.goss.gridappsd.configuration.YBusExportConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.CIMDictionaryConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.CIMFeederIndexConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.CIMSymbolsConfigurationHandler;
@@ -74,18 +75,19 @@ public class ConfigurationManagerTest {
 			e.printStackTrace();
 		}
 		System.out.println("SIMULATION ID "+test.simulationId);
-//		try {
-//			Thread.sleep(35000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		test.testgetGLDAllConfiguration();
 //		test.testgetCIMDictConfiguration();
 //		test.testgetGLDSimulationOutputConfiguration();
 //		test.testgetGLMBaseConfiguration();
 //		test.testgetGLMSymbolsConfiguration();
 //		test.testgetCIMFeederIndexConfiguration();
+		test.testgetYBusConfiguration();
 	}
 	
 	public String startSimulation() throws Exception{
@@ -179,7 +181,7 @@ public class ConfigurationManagerTest {
 				DataResponse dataResponse = DataResponse.parse(responseStr);
 				System.out.println("Response: ");
 				System.out.println(dataResponse.isError());
-//				System.out.println(dataResponse.getData());
+				System.out.println(dataResponse.getData());
 
 			} else {
 				System.out.println(response);
@@ -282,7 +284,7 @@ public class ConfigurationManagerTest {
 				DataResponse dataResponse = DataResponse.parse(responseStr);
 				System.out.println(dataResponse.isError());
 
-//				System.out.println(dataResponse.getData());
+				System.out.println(dataResponse.getData());
 			} else {
 				System.out.println(response);
 				System.out.println(response.getClass());
@@ -319,7 +321,14 @@ public class ConfigurationManagerTest {
 		long end = new Date().getTime();
 		System.out.println("Took "+(end-start)+" ms");
 	}
-	
+	public void testgetYBusConfiguration(){
+		long start = new Date().getTime();
+//		String objectMrid = "_4F76A5F9-271D-9EB8-5E31-AA362D86F2C3";
+
+		testConfig(YBusExportConfigurationHandler.TYPENAME, null, simulationId);
+		long end = new Date().getTime();
+		System.out.println("Took "+(end-start)+" ms");
+	}
 	
 	void testConfig (String type, String modelId, String simulationId){
 		try {
@@ -327,7 +336,9 @@ public class ConfigurationManagerTest {
 			ConfigurationRequest configRequest = new ConfigurationRequest();
 			configRequest.setConfigurationType(type);
 			Properties properties = new Properties();
-			properties.setProperty(GLDAllConfigurationHandler.MODELID, modelId);
+			if(modelId!=null){
+				properties.setProperty(GLDAllConfigurationHandler.MODELID, modelId);
+			}
 			if(simulationId!=null){
 				properties.setProperty(GLDAllConfigurationHandler.SIMULATIONID, simulationId);
 
@@ -346,7 +357,7 @@ public class ConfigurationManagerTest {
 				String responseStr = response.toString();
 				DataResponse dataResponse = DataResponse.parse(responseStr);
 				System.out.println("Response: ");
-//				System.out.println(dataResponse.getData());
+				System.out.println(dataResponse.getData());
 				System.out.println(dataResponse.isError());
 
 			} else {
