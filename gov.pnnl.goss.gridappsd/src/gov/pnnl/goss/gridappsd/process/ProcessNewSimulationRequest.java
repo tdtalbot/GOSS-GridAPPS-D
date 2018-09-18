@@ -122,7 +122,7 @@ public class ProcessNewSimulationRequest {
 				logManager.log(
 						new LogMessage(this.getClass().getName(), new Integer(
 								simulationId).toString(), new Date().getTime(),
-								"No simulation file returned for request "
+								"No simulation power config in request "
 										+ config, LogLevel.INFO,
 								ProcessStatus.RUNNING, false), username,
 						GridAppsDConstants.topic_simulationLog + simulationId);
@@ -290,20 +290,22 @@ public class ProcessNewSimulationRequest {
 					simulationLogTopic);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				logManager.log(
-						new LogMessage(this.getClass().getName(), new Integer(
-								simulationId).toString(), new Date().getTime(),
-								"Process Initialization error: "
-										+ e.getMessage(), LogLevel.ERROR,
-								ProcessStatus.ERROR, false),
-						GridAppsDConstants.username,
-						GridAppsDConstants.topic_platformLog);
+			try{
+					logManager.log(
+							new LogMessage(this.getClass().getName(), new Integer(
+									simulationId).toString(), new Date().getTime(),
+									"Simulation Initialization error: "
+											+ e.getMessage(), LogLevel.ERROR,
+									ProcessStatus.ERROR, false),
+							GridAppsDConstants.username,
+							GridAppsDConstants.topic_platformLog);
+				}catch (Exception e1) {
+					//Error while logging exception
+					e1.printStackTrace();
+				}
+					//Make sure error is thrown so that requesting process is notified of the failure
+				throw new RuntimeException("Simulation Initialization error: "+e, e);
 
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
 		}
 	}
 	
