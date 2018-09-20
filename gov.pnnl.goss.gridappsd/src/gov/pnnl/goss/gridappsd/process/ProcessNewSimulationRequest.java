@@ -52,9 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.management.RuntimeErrorException;
-
-import org.apache.felix.dm.annotation.api.Registered;
 
 import gov.pnnl.goss.gridappsd.api.AppManager;
 import gov.pnnl.goss.gridappsd.api.ConfigurationManager;
@@ -180,14 +177,17 @@ public class ProcessNewSimulationRequest {
 							new Date().getTime(),
 							"Cannot find service with id ="+config.getSimulation_config().getSimulator(), 
 							LogLevel.DEBUG, ProcessStatus.RUNNING, true), GridAppsDConstants.topic_simulationLog+simulationId);
+					//Shouldn't the process fail on this?
 				}else if(serviceManager.getService(config.getSimulation_config().getSimulator()).getExecution_path() == null){
 					logManager.log(new LogMessage(this.getClass().getSimpleName(), 
 							simId, 
 							new Date().getTime(),
 							"Cannot find execution path for service ="+config.getSimulation_config().getSimulator(), 
 							LogLevel.DEBUG, ProcessStatus.RUNNING, true), GridAppsDConstants.topic_simulationLog+simulationId);
+					//Shouldn't the process fail on this?
+				} else {
+					e.printStackTrace();
 				}
-				e.printStackTrace();
 			}
 			 
 			
@@ -223,14 +223,17 @@ public class ProcessNewSimulationRequest {
 							new Date().getTime(),
 							"Cannot find service with id ="+config.getSimulation_config().getSimulator(), 
 							LogLevel.WARN, ProcessStatus.RUNNING, true), GridAppsDConstants.topic_simulationLog+simulationId);
+					//Shouldn't it fail on this?
 				}else if(serviceManager.getService(config.getSimulation_config().getSimulator()).getExecution_path() == null){
 					logManager.log(new LogMessage(this.getClass().getSimpleName(), 
 							simId, 
 							new Date().getTime(),
 							"Cannot find execution path for service ="+config.getSimulation_config().getSimulator(), 
 							LogLevel.DEBUG, ProcessStatus.RUNNING, true), GridAppsDConstants.topic_simulationLog+simulationId);
+					//Shouldn't it fail on this?
+				} else {
+					e.printStackTrace();
 				}
-				e.printStackTrace();
 			}
 		
 			List<String> connectServiceInstanceIds = new ArrayList<String>();
