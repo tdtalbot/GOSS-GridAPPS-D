@@ -108,7 +108,7 @@ public class BGPowergridModelDataManagerImpl implements PowergridModelDataManage
 		
 //		reservedModelNames.add("kb");
 		
-		dataManager.registerDataManagerHandler(new BGPowergridModelDataManagerHandlerImpl(this), DATA_MANAGER_TYPE);
+		dataManager.registerDataManagerHandler(new BGPowergridModelDataManagerHandlerImpl(this, logManager), DATA_MANAGER_TYPE);
 	}
 	
 	
