@@ -41,6 +41,7 @@ package gov.pnnl.goss.gridappsd.configuration;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.felix.dm.annotation.api.Component;
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import gov.pnnl.goss.cim2glm.CIMImporter;
 import gov.pnnl.goss.cim2glm.OperationalLimits;
+import gov.pnnl.goss.cim2glm.components.DistCoordinates;
 import gov.pnnl.goss.cim2glm.queryhandler.QueryHandler;
 import gov.pnnl.goss.gridappsd.api.ConfigurationHandler;
 import gov.pnnl.goss.gridappsd.api.ConfigurationManager;
@@ -148,12 +150,11 @@ public class GLDLimitsConfigurationHandler extends BaseConfigurationHandler impl
 		
 		QueryHandler queryHandler = new BlazegraphQueryHandler(bgHost, logManager, processId, username);
 		queryHandler.addFeederSelection(modelId);
-
+		HashMap<String, DistCoordinates> mapCoordinates = new HashMap<String, DistCoordinates>();
 		//CIM2GLM utility uses
 		CIMImporter cimImporter = new CIMImporter();
-		
 		OperationalLimits oLimits = new OperationalLimits();
-		oLimits.BuildLimitMaps (cimImporter, queryHandler);
+		oLimits.BuildLimitMaps (cimImporter, queryHandler, mapCoordinates);
 		out.println("{\"limits\":{");
 		out.println("\"voltages\":[");
 		oLimits.VoltageMapToJSON (out);
