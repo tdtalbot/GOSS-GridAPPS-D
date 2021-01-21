@@ -1039,8 +1039,8 @@ def _register_with_goss(sim_id,username,password,goss_server='localhost',
     #goss_connection = stomp.Connection12([(goss_server, stomp_port)])
     #goss_connection.start()
     #goss_connection.connect(username,password, wait=True)
-    goss_connection = GridAPPSD(simulation_id, address=utils.get_gridappsd_address(),
-                                username=utils.get_gridappsd_user(), password=utils.get_gridappsd_pass())
+    goss_connection = GridAPPSD(simulation_id, (goss_server, stomp_port),
+                                username, password)
     #goss_connection.set_listener('GOSSListener', goss_listener_instance)
     #goss_connection.subscribe(input_from_goss_topic,1)
     #goss_connection.subscribe(simulation_input_topic + "{}".format(simulation_id),2)
