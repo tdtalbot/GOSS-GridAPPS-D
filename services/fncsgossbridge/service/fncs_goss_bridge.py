@@ -1039,8 +1039,8 @@ def _register_with_goss(sim_id,user,passwd,goss_server='localhost',
     #goss_connection = stomp.Connection12([(goss_server, stomp_port)])
     #goss_connection.start()
     #goss_connection.connect(username,password, wait=True)
-    goss_connection = GridAPPSD(simulation_id, address=([(goss_server, stomp_port)]),
-                                username=user, password=passwd)
+	server = [goss_server, stomp_port]
+    goss_connection = GridAPPSD(simulation_id, address=server, username=user, password=passwd)
     #goss_connection.set_listener('GOSSListener', goss_listener_instance)
     #goss_connection.subscribe(input_from_goss_topic,1)
     #goss_connection.subscribe(simulation_input_topic + "{}".format(simulation_id),2)
@@ -1425,9 +1425,9 @@ def _get_opts():
     parser.add_argument("broker_location", help="The location of the FNCS broker.")
     parser.add_argument("simulation_directory", help="The simulation files directory.")
     parser.add_argument("simulation_request", help="The simulation request.")
+    parser.add_argument("logLevel", help="The log level at which platform was started")
     parser.add_argument("username", help="The username to connect to the message bus.")
     parser.add_argument("password", help="The password to connect to the message bus.")
-    parser.add_argument("logLevel", help="The log level at which platform was started")
     opts = parser.parse_args()
     return opts
 
@@ -1437,6 +1437,8 @@ if __name__ == "__main__":
     opts = _get_opts()
     simulation_id = opts.simulation_id
     platform_log_level = log_level_dict[opts.logLevel]
+	username = opts.username
+	password = opts.password
     # logging within the context of the container.
     logfile = "/tmp/gridappsd_tmp/{simulation_id}/fncs_goss_bridge.log".format(simulation_id=simulation_id)
     logging.basicConfig(level=logging.INFO, filename=logfile)
@@ -1463,6 +1465,6 @@ if __name__ == "__main__":
         archive_file = "/tmp/gridappsd_tmp/{simulation_id}/archive.tar.gz".format(simulation_id=simulation_id)
     _log.debug("Archive settings:\n\tarchive_db_file: {}\n\tarchive_file: {}\n\tonly_archive: {}".format(
         archive_db_file, archive_file, only_archive))
-	print("ABOUTY TO CALL MAIN WITH USERNAME "+username+" "+password)
+    print("ABOUTY TO CALL MAIN WITH USERNAME "+username+" "+password)
     _main(simulation_id, sim_broker_location, sim_dir, run_realtime, sim_duration, sim_start_str,
           archive_db_file, archive_file, only_archive, username, password)
