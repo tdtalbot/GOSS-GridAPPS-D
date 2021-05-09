@@ -61,7 +61,6 @@ import gov.pnnl.goss.gridappsd.api.SimulationManager;
 import gov.pnnl.goss.gridappsd.api.TestManager;
 import gov.pnnl.goss.gridappsd.configuration.DSSAllConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.GLDAllConfigurationHandler;
-import gov.pnnl.goss.gridappsd.configuration.OchreAllConfigurationHandler;
 import gov.pnnl.goss.gridappsd.dto.AppInfo;
 import gov.pnnl.goss.gridappsd.dto.ApplicationObject;
 import gov.pnnl.goss.gridappsd.dto.LogMessage.ProcessStatus;
@@ -167,9 +166,19 @@ public class ProcessNewSimulationRequest {
 			} 
 
 			String simulator = simRequest.getSimulation_config().getSimulator();
+			String configType = configurationManager.getTypeForSimulator(simulator);
 			//generate config files for requested simulator
+			Properties simulationParams = generateSimulationParameters(simRequest);
+			simulationParams.put(DSSAllConfigurationHandler.SIMULATIONID, simulationId);
+			simulationParams.put(DSSAllConfigurationHandler.DIRECTORY, tempDataPathDir.getAbsolutePath());
+			if(gldInterface!=null){
+				simulationParams.put(GridAppsDConstants.GRIDLABD_INTERFACE, gldInterface);
+			}
+			configurationManager.generateConfiguration(configType, simulationParams, new PrintWriter(new StringWriter()), simulationId, username);
+			
+			
 			//if requested simulator is opendss
-			if(simulator.equalsIgnoreCase(DSSAllConfigurationHandler.CONFIGTARGET)){
+			/*if(simulator.equalsIgnoreCase(DSSAllConfigurationHandler.CONFIGTARGET)){
 				Properties simulationParams = generateSimulationParameters(simRequest);
 				simulationParams.put(DSSAllConfigurationHandler.SIMULATIONID, simulationId);
 				simulationParams.put(DSSAllConfigurationHandler.DIRECTORY, tempDataPathDir.getAbsolutePath());
@@ -195,7 +204,7 @@ public class ProcessNewSimulationRequest {
 					simulationParams.put(GridAppsDConstants.GRIDLABD_INTERFACE, gldInterface);
 				}
 				configurationManager.generateConfiguration(GLDAllConfigurationHandler.TYPENAME, simulationParams, new PrintWriter(new StringWriter()), simulationId, username);
-			}
+			}*/
 			
 			logManager.debug(ProcessStatus.RUNNING, simulationId, "Simulation and power grid model files generated for simulation Id ");
 

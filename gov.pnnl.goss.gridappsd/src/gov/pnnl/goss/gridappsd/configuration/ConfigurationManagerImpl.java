@@ -96,6 +96,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager{
 	private Dictionary<String, ?> configurationProperties;
 	
 	private HashMap<String, ConfigurationHandler> configHandlers = new HashMap<String, ConfigurationHandler>();
+	private HashMap<String, String> simulators = new HashMap<String, String>();
 	
 	
 	
@@ -145,6 +146,17 @@ public class ConfigurationManagerImpl implements ConfigurationManager{
 		this.configurationProperties = config;
 	}
 	
+	public String getTypeForSimulator(String simulator){
+		if(this.simulators!=null){
+			Object value = this.simulators.get(simulator);
+			if(value!=null)
+				return value.toString();
+			else
+				return GLDAllConfigurationHandler.TYPENAME;
+		}
+		return null;
+	}
+	
 	public String getConfigurationProperty(String key){
 		if(this.configurationProperties!=null){
 			Object value = this.configurationProperties.get(key);
@@ -155,9 +167,13 @@ public class ConfigurationManagerImpl implements ConfigurationManager{
 	}
 
 	@Override
-	public void registerConfigurationHandler(String type, ConfigurationHandler handler) {
+	public void registerConfigurationHandler(String type, ConfigurationHandler handler, String simulator) {
+		//todo, throw error if duplicate registered
 		logManager.info(ProcessStatus.RUNNING, null, "Registring config "+type+" "+handler.getClass());
 		configHandlers.put(type, handler);
+		if(simulator!=null){
+			simulators.put(simulator, type);
+		}
 	}
 
 	@Override

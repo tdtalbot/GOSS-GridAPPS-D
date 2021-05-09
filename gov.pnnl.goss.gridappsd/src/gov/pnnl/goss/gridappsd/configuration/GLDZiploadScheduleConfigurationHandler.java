@@ -111,7 +111,7 @@ public class GLDZiploadScheduleConfigurationHandler extends
 	@Start
 	public void start() {
 		if (configManager != null) {
-			configManager.registerConfigurationHandler(TYPENAME, this);
+			configManager.registerConfigurationHandler(TYPENAME, this, null);
 		} else {
 			logManager.error(ProcessStatus.ERROR, null, "No Config manager avilable for " + getClass().getSimpleName());
 		}

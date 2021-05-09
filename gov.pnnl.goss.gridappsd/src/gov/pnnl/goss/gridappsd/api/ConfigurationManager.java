@@ -68,7 +68,8 @@ public interface ConfigurationManager {
 	 */
 	File getSimulationFile(String simulationId, RequestSimulation powerSystemConfig) throws Exception;
 	String getConfigurationProperty(String key);
-	void registerConfigurationHandler(String type, ConfigurationHandler handler);
+	void registerConfigurationHandler(String type, ConfigurationHandler handler, String simulator);
+	public String getTypeForSimulator(String simulator);
 	void generateConfiguration(String type, Properties parameters, PrintWriter out, String processId, String username) throws Exception;
 
 }

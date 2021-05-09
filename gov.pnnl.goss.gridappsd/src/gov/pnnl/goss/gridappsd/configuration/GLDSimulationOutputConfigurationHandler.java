@@ -128,7 +128,7 @@ public class GLDSimulationOutputConfigurationHandler extends BaseConfigurationHa
 	@Start
 	public void start(){
 		if(configManager!=null) {
-			configManager.registerConfigurationHandler(TYPENAME, this);
+			configManager.registerConfigurationHandler(TYPENAME, this, null);
 		}
 		else { 
 			//TODO send log message and exception
