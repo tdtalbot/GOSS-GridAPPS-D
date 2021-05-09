@@ -167,11 +167,19 @@ public class ConfigurationManagerImpl implements ConfigurationManager{
 	}
 
 	@Override
-	public void registerConfigurationHandler(String type, ConfigurationHandler handler, String simulator) {
+	public void registerConfigurationHandler(String type, ConfigurationHandler handler, String simulator){
 		//todo, throw error if duplicate registered
 		logManager.info(ProcessStatus.RUNNING, null, "Registring config "+type+" "+handler.getClass());
+		
+		if(configHandlers.containsKey(type)){
+			throw new RuntimeException("Duplicate configuration handler registered for '"+type+"'");
+		}
 		configHandlers.put(type, handler);
 		if(simulator!=null){
+			if(simulators.containsKey(simulator)){
+				throw new RuntimeException("Duplicate configuration simulator handler registered for '"+simulator+"'");
+
+			}
 			simulators.put(simulator, type);
 		}
 	}

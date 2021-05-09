@@ -146,7 +146,7 @@ public class GLDAllConfigurationHandler extends BaseConfigurationHandler impleme
 	@Start
 	public void start(){
 		if(configManager!=null) {
-			configManager.registerConfigurationHandler(TYPENAME, this, "default");
+			configManager.registerConfigurationHandler(TYPENAME, this, CONFIGTARGET);
 		}
 		else {
 			//TODO send log message and exception
