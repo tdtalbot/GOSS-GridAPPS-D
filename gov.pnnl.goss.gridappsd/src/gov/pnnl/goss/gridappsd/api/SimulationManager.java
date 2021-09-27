@@ -58,7 +58,9 @@ public interface SimulationManager {
 	 * @param simulationFile
 	 * @param simulationConfig	Map<String, Object> simulationContext
 	 */
-	void startSimulation(String simulationId, SimulationConfig simulationConfig, SimulationContext simContext, Map<String, Object> simulationContext);
+	void registerSimulator(String simulatorName, Simulator simulator);
+	
+	void startSimulation(String simulationId, SimulationConfig simulationConfig, SimulationContext simContext, Map<String, Object> simulationContext) throws Exception;
 	
 	SimulationContext getSimulationContextForId(String simulationId);
 

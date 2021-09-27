@@ -208,23 +208,23 @@ public class ProcessNewSimulationRequest {
 
 			// Start Apps and Services
 
-			Map<String,Object> simulationContext = new HashMap<String,Object>();
-			simulationContext.put("request",simRequest);
-			simulationContext.put("simulationId",simulationId);
-			simulationContext.put("simulationHost","127.0.0.1");
-			simulationContext.put("simulationPort",simulationPort);
-			simulationContext.put("simulationDir",simulationConfigDir);
-			simulationContext.put("numFederates",numFederates);
+			Map<String,Object> simulationContextParams = new HashMap<String,Object>();
+			simulationContextParams.put("request",simRequest);
+			simulationContextParams.put("simulationId",simulationId);
+			simulationContextParams.put("simulationHost","127.0.0.1");
+			simulationContextParams.put("simulationPort",simulationPort);
+			simulationContextParams.put("simulationDir",simulationConfigDir);
+			simulationContextParams.put("numFederates",numFederates);
 
 			if(simRequest.getSimulation_config().getSimulator().equals("GridLAB-D"))
-				simulationContext.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"model_startup.glm");
+				simulationContextParams.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"model_startup.glm");
 			else if(simRequest.getSimulation_config().getSimulator().equals("OCHRE"))
-				simulationContext.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"ochre_helics_config.json");
-			simulationContext.put("logLevel", logManager.getLogLevel());
-			simulationContext.put("username", securityConfig.getManagerUser());
-			simulationContext.put("password", securityConfig.getManagerPassword());
+				simulationContextParams.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"ochre_helics_config.json");
+			simulationContextParams.put("logLevel", logManager.getLogLevel());
+			simulationContextParams.put("username", securityConfig.getManagerUser());
+			simulationContextParams.put("password", securityConfig.getManagerPassword());
 			try{
-				simulationContext.put("simulatorPath",serviceManager.getService(simRequest.getSimulation_config().getSimulator()).getExecution_path());
+				simulationContextParams.put("simulatorPath",serviceManager.getService(simRequest.getSimulation_config().getSimulator()).getExecution_path());
 			}catch(NullPointerException e){
 				if(serviceManager.getService(simRequest.getSimulation_config().getSimulator()) == null){
 					logManager.error(ProcessStatus.ERROR, simulationId,"Cannot find service with id ="+simRequest.getSimulation_config().getSimulator());
@@ -245,7 +245,7 @@ public class ProcessNewSimulationRequest {
 				for(ServiceConfig serviceConfig : simRequest.service_configs){
 					logManager.info(ProcessStatus.RUNNING, simulationId, "Starting service"+serviceConfig.getId());
 
-					String serviceInstanceId = serviceManager.startServiceForSimultion(serviceConfig.getId(), null, simulationContext);
+					String serviceInstanceId = serviceManager.startServiceForSimultion(serviceConfig.getId(), null, simulationContextParams);
 					if(serviceInstanceId!=null){
 						connectServiceInstanceIds.add(serviceInstanceId);
 						connectServiceIds.add(serviceConfig.getId());
@@ -275,7 +275,7 @@ public class ProcessNewSimulationRequest {
 					for (String prereqs : prereqsList) {
 
 						if(!connectServiceIds.contains(prereqs)){
-							String serviceInstanceId = serviceManager.startServiceForSimultion(prereqs, null,simulationContext);
+							String serviceInstanceId = serviceManager.startServiceForSimultion(prereqs, null,simulationContextParams);
 							if(serviceInstanceId!=null){
 								connectServiceInstanceIds.add(serviceInstanceId);
 								logManager.info(ProcessStatus.RUNNING, simulationId, "Started " + prereqs + " with instance id " + serviceInstanceId);
@@ -284,22 +284,22 @@ public class ProcessNewSimulationRequest {
 					}
 
 					String appInstanceId = appManager.startAppForSimultion(app
-							.getName(), app.getConfig_string(), simulationContext);
+							.getName(), app.getConfig_string(), simulationContextParams);
 					connectedAppInstanceIds.add(appInstanceId);
 					logManager.info(ProcessStatus.RUNNING, simulationId, "Started "+ app.getName() + " with instance id "+ appInstanceId);
 
 				}
 			}
 
-			simulationContext.put("connectedServiceInstanceIds",connectServiceInstanceIds);
-			simulationContext.put("connectedAppInstanceIds",connectedAppInstanceIds);
+			simulationContextParams.put("connectedServiceInstanceIds",connectServiceInstanceIds);
+			simulationContextParams.put("connectedAppInstanceIds",connectedAppInstanceIds);
 			simContext.serviceInstanceIds = connectServiceInstanceIds;
 			simContext.appInstanceIds = connectedAppInstanceIds;
 			
 			ServiceInfo simulationServiceInfo = serviceManager.getService(simRequest.getSimulation_config().simulator);
 			List<String> serviceDependencies = simulationServiceInfo.getService_dependencies();
 			for(String service : serviceDependencies) {
-				String serviceInstanceId = serviceManager.startServiceForSimultion(service, null, simulationContext);
+				String serviceInstanceId = serviceManager.startServiceForSimultion(service, null, simulationContextParams);
 				if(serviceInstanceId!=null)
 					simContext.addServiceInstanceIds(serviceInstanceId);
 			}
@@ -311,7 +311,7 @@ public class ProcessNewSimulationRequest {
 			
 			// start simulation
 			logManager.debug(ProcessStatus.RUNNING, simulationId,"Starting simulation for id " + simulationId);
-			simulationManager.startSimulation(simulationId, simRequest.getSimulation_config(),simContext, simulationContext);
+			simulationManager.startSimulation(simulationId, simRequest.getSimulation_config(),simContext, simulationContextParams);
 			logManager.info(ProcessStatus.RUNNING, simulationId,"Started simulation for id " + simulationId);
 			
 

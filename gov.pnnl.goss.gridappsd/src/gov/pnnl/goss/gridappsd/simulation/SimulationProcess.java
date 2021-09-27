@@ -3,6 +3,7 @@ package gov.pnnl.goss.gridappsd.simulation;
 import gov.pnnl.goss.gridappsd.api.AppManager;
 import gov.pnnl.goss.gridappsd.api.LogManager;
 import gov.pnnl.goss.gridappsd.api.ServiceManager;
+import gov.pnnl.goss.gridappsd.api.Simulator;
 import gov.pnnl.goss.gridappsd.configuration.GLDAllConfigurationHandler;
 import gov.pnnl.goss.gridappsd.configuration.OchreAllConfigurationHandler;
 import gov.pnnl.goss.gridappsd.dto.FncsBridgeResponse;
@@ -69,11 +70,13 @@ public class SimulationProcess extends Thread {
     AppManager appManager;
     Client client;
     SecurityConfig securityConfig;
-    Map<String, Object> simulationContex;
+    Map<String, Object> simulationContextParams;
+    Simulator simulator;
 
     public SimulationProcess(SimulationContext simContext, ServiceManager serviceManager,
             SimulationConfig simulationConfig, String simulationId, LogManager logManager,
-            AppManager appManager, Client client, SecurityConfig securityConfig, Map<String, Object> simulationContex){
+            AppManager appManager, Client client, SecurityConfig securityConfig, 
+            Map<String, Object> simulationContex, Simulator simulator){
         this.simContext = simContext;
         this.serviceManager = serviceManager;
         this.simulationConfig = simulationConfig;
@@ -82,7 +85,8 @@ public class SimulationProcess extends Thread {
         this.appManager = appManager;
         this.client = client;
         this.securityConfig = securityConfig;
-        this.simulationContex = simulationContex;
+        this.simulationContextParams = simulationContex;
+        this.simulator = simulator;
     }
 
 
@@ -95,95 +99,98 @@ public class SimulationProcess extends Thread {
         SimulationTracker isFinished = new SimulationTracker();
         try{
 
-            File simulationFile = new File(simContext.getStartupFile());
-
-            //if(simulationConfig!=null && simulationConfig.model_creation_config!=null && simulationConfig.model_creation_config.schedule_name!=null && simulationConfig.model_creation_config.schedule_name.trim().length()>0){
-            File serviceDir = serviceManager.getServiceConfigDirectory();
-            /*try{
-                RunCommandLine.runCommand("cp "+serviceDir.getAbsolutePath()+File.separator+"etc"+File.separator+"zipload_schedule.player "+simulationFile.getParentFile().getAbsolutePath()+File.separator+simulationConfig.model_creation_config.schedule_name+".player");
-            }catch(Exception e){
-               log.warn("Could not copy player file to working directory");
-            }*/
-            try{
-                RunCommandLine.runCommand("cp "+serviceDir.getAbsolutePath()+File.separator+"etc"+File.separator+"appliance_schedules.glm "+simulationFile.getParentFile().getAbsolutePath()+File.separator+GLDAllConfigurationHandler.SCHEDULES_FILENAME);
-            }catch(Exception e){
-                log.warn("Could not copy schedules file to working directory");
-            }
-            //}
-
-            //Start Simulator
-            ProcessBuilder simulatorBuilder = new ProcessBuilder();
-            List<String> commands = new ArrayList<String>();
-            
-            if(simulationConfig.getSimulator().equals(OchreAllConfigurationHandler.TYPENAME)){
-            	simContext.setNumFederates(42);
-	            logManager.info(ProcessStatus.RUNNING, simulationId, "Setting num federates ");
-
-            	//Start gridlabd
-//				simulationContext.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"model_startup.glm");
-	            //TODO: Change this hard coded startup files
-	            File gldStartupFile = null;
-	            RequestSimulation simRequest = (RequestSimulation)simContext.getRequest();
-	            if (simRequest.power_system_config.Line_name.contains("_13AD8E07-3BF9-A4E2-CB8F-C3722F837B62"))
-	            	gldStartupFile = new File(simContext.simulationDir+File.separator+"inputs"+File.separator+"gridlabd"+File.separator+"IEEE-13"+File.separator+"IEEE-13_Houses.glm");
-	            else
-	            	gldStartupFile = new File(simContext.getSimulationDir()+File.separator+"model_startup.glm");
-				String gldSimulatorPath = serviceManager.getService(gridlabdConstant).getExecution_path();
+        	simulator.startSimulator(simContext, simulationContextParams, simulationId, simulationConfig, serviceManager);
+        	
+//        	//In simulator
+//            File simulationFile = new File(simContext.getStartupFile());
+//
+//            //if(simulationConfig!=null && simulationConfig.model_creation_config!=null && simulationConfig.model_creation_config.schedule_name!=null && simulationConfig.model_creation_config.schedule_name.trim().length()>0){
+//            File serviceDir = serviceManager.getServiceConfigDirectory();
+//            /*try{
+//                RunCommandLine.runCommand("cp "+serviceDir.getAbsolutePath()+File.separator+"etc"+File.separator+"zipload_schedule.player "+simulationFile.getParentFile().getAbsolutePath()+File.separator+simulationConfig.model_creation_config.schedule_name+".player");
+//            }catch(Exception e){
+//               log.warn("Could not copy player file to working directory");
+//            }*/
+//            try{
+//                RunCommandLine.runCommand("cp "+serviceDir.getAbsolutePath()+File.separator+"etc"+File.separator+"appliance_schedules.glm "+simulationFile.getParentFile().getAbsolutePath()+File.separator+GLDAllConfigurationHandler.SCHEDULES_FILENAME);
+//            }catch(Exception e){
+//                log.warn("Could not copy schedules file to working directory");
+//            }
+//            //}
+//
+//            //Start Simulator
+//            ProcessBuilder simulatorBuilder = new ProcessBuilder();
+//            List<String> commands = new ArrayList<String>();
+//             
+//            if(simulationConfig.getSimulator().equals(OchreAllConfigurationHandler.TYPENAME)){
+//            	simContext.setNumFederates(42);
+//	            logManager.info(ProcessStatus.RUNNING, simulationId, "Setting num federates ");
+//
+//            	//Start gridlabd
+////				simulationContext.put("simulationFile",tempDataPathDir.getAbsolutePath()+File.separator+"model_startup.glm");
+//	            //TODO: Change this hard coded startup files
+//	            File gldStartupFile = null;
+//	            RequestSimulation simRequest = (RequestSimulation)simContext.getRequest();
+//	            if (simRequest.power_system_config.Line_name.contains("_13AD8E07-3BF9-A4E2-CB8F-C3722F837B62"))
+//	            	gldStartupFile = new File(simContext.simulationDir+File.separator+"inputs"+File.separator+"gridlabd"+File.separator+"IEEE-13"+File.separator+"IEEE-13_Houses.glm");
+//	            else
+//	            	gldStartupFile = new File(simContext.getSimulationDir()+File.separator+"model_startup.glm");
+//				String gldSimulatorPath = serviceManager.getService(gridlabdConstant).getExecution_path();
+////            	commands.add(simContext.getSimulatorPath());
+//				commands.add(gldSimulatorPath);
+////            	commands.add(simulationFile.getAbsolutePath());
+//            	commands.add(gldStartupFile.getAbsolutePath());
+//                ProcessBuilder gldSimulatorBuilder = new ProcessBuilder();
+//                gldSimulatorBuilder.command(commands);
+//                gldSimulatorBuilder.redirectErrorStream(true);
+//                gldSimulatorBuilder.redirectOutput();
+//	            //launch from directory containing simulation files
+//                gldSimulatorBuilder.directory(simulationFile.getParentFile());
+//	            logManager.info(ProcessStatus.RUNNING, simulationId, "Starting gridlabd simulator with command "+String.join(" ",commands));
+//	            simulatorProcess = gldSimulatorBuilder.start();
+//	            // Watch the process
+//	            watch(simulatorProcess, "GLDSimulator-"+simulationId);
+//            	
+//            	//Start ochre
+//            	commands = new ArrayList<String>();
 //            	commands.add(simContext.getSimulatorPath());
-				commands.add(gldSimulatorPath);
+//            	ServiceInfo serviceInfo = serviceManager.getService(simulationConfig.getSimulator());
+//            	List<String> staticArgsList = serviceInfo.getStatic_args();
+//        		for(String staticArg : staticArgsList) {
+//        		    if(staticArg!=null){
+//        		    	//Right now this depends on having the simulationContext set, so don't try it if the simulation context is null
+//        				if(simulationContex!=null){
+//        			    	if(staticArg.contains("(")){
+//        				    	 String[] replaceArgs = StringUtils.substringsBetween(staticArg, "(", ")");
+//        				    	 for(String args : replaceArgs){
+//        				    		 staticArg = staticArg.replace("("+args+")",simulationContex.get(args).toString());
+//        				    	 }
+//        			    	}
+//        				}
+//        		    	commands.add(staticArg);
+//        		    }
+//        		}
+//            	simulatorBuilder.command(commands);
+//	            logManager.info(ProcessStatus.RUNNING, simulationId, "Command for ochre ready "+String.join(" ",commands));
+//
+//            }
+//            else if(simulationConfig.getSimulator().equals(gridlabdConstant)){
+//            	commands.add(simContext.getSimulatorPath());
 //            	commands.add(simulationFile.getAbsolutePath());
-            	commands.add(gldStartupFile.getAbsolutePath());
-                ProcessBuilder gldSimulatorBuilder = new ProcessBuilder();
-                gldSimulatorBuilder.command(commands);
-                gldSimulatorBuilder.redirectErrorStream(true);
-                gldSimulatorBuilder.redirectOutput();
-	            //launch from directory containing simulation files
-                gldSimulatorBuilder.directory(simulationFile.getParentFile());
-	            logManager.info(ProcessStatus.RUNNING, simulationId, "Starting gridlabd simulator with command "+String.join(" ",commands));
-	            simulatorProcess = gldSimulatorBuilder.start();
-	            // Watch the process
-	            watch(simulatorProcess, "GLDSimulator-"+simulationId);
-            	
-            	//Start ochre
-            	commands = new ArrayList<String>();
-            	commands.add(simContext.getSimulatorPath());
-            	ServiceInfo serviceInfo = serviceManager.getService(simulationConfig.getSimulator());
-            	List<String> staticArgsList = serviceInfo.getStatic_args();
-        		for(String staticArg : staticArgsList) {
-        		    if(staticArg!=null){
-        		    	//Right now this depends on having the simulationContext set, so don't try it if the simulation context is null
-        				if(simulationContex!=null){
-        			    	if(staticArg.contains("(")){
-        				    	 String[] replaceArgs = StringUtils.substringsBetween(staticArg, "(", ")");
-        				    	 for(String args : replaceArgs){
-        				    		 staticArg = staticArg.replace("("+args+")",simulationContex.get(args).toString());
-        				    	 }
-        			    	}
-        				}
-        		    	commands.add(staticArg);
-        		    }
-        		}
-            	simulatorBuilder.command(commands);
-	            logManager.info(ProcessStatus.RUNNING, simulationId, "Command for ochre ready "+String.join(" ",commands));
-
-            }
-            else if(simulationConfig.getSimulator().equals(gridlabdConstant)){
-            	commands.add(simContext.getSimulatorPath());
-            	commands.add(simulationFile.getAbsolutePath());
-            	simulatorBuilder.command(commands);
-            } else {
-            	log.warn("No known simulator: "+simulationConfig.getSimulator());
-            }
-            simulatorBuilder.redirectErrorStream(true);
-            simulatorBuilder.redirectOutput();
-            //launch from directory containing simulation files
-            simulatorBuilder.directory(simulationFile.getParentFile());
-            logManager.info(ProcessStatus.RUNNING, simulationId, "Starting simulator with command "+String.join(" ",commands));
-            simulatorProcess = simulatorBuilder.start();
-            logManager.info(ProcessStatus.RUNNING, simulationId, "Started simulator with command "+String.join(" ",commands));
-
-            // Watch the process
-            watch(simulatorProcess, "Simulator-"+simulationId);
+//            	simulatorBuilder.command(commands);
+//            } else {
+//            	log.warn("No known simulator: "+simulationConfig.getSimulator());
+//            }
+//            simulatorBuilder.redirectErrorStream(true);
+//            simulatorBuilder.redirectOutput();
+//            //launch from directory containing simulation files
+//            simulatorBuilder.directory(simulationFile.getParentFile());
+//            logManager.info(ProcessStatus.RUNNING, simulationId, "Starting simulator with command "+String.join(" ",commands));
+//            simulatorProcess = simulatorBuilder.start();
+//            logManager.info(ProcessStatus.RUNNING, simulationId, "Started simulator with command "+String.join(" ",commands));
+//
+//            // Watch the process
+//            watch(simulatorProcess, "Simulator-"+simulationId);
 
 
             //TODO: check if GridLAB-D is started correctly and send publish simulation status accordingly
@@ -260,33 +267,33 @@ public class SimulationProcess extends Thread {
         client.publish(GridAppsDConstants.topic_COSIM_input, message);
     }
 
-    private void watch(final Process process, String processName) {
-        new Thread() {
-            public void run() {
-                BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line = null;
-                try {
-                    while ((line = input.readLine()) != null) {
-                    	if(!line.trim().isEmpty()){
-                    		if(line.contains("DEBUG"))
-                    			logManager.debug(ProcessStatus.RUNNING, processName, line);
-                    		else if(line.contains("ERROR"))
-                    			logManager.error(ProcessStatus.ERROR, processName, line);
-                    		else if(line.contains("FATAL") && !line.contains("INFO"))
-                    			logManager.fatal(ProcessStatus.ERROR, processName, line);
-                    		else if(line.contains("WARN"))
-                    			logManager.warn(ProcessStatus.RUNNING, processName, line);
-                    		else
-                    			logManager.debug(ProcessStatus.RUNNING, processName, line);
-                    	}
-                    }
-                } catch (IOException e) {
-                	if(!(e.getMessage().contains("Stream closed")))
-                		logManager.error(ProcessStatus.ERROR, processName, "Error reading input stream of simulator process: "+e.getMessage());
-                }
-            }
-        }.start();
-    }
+//    private void watch(final Process process, String processName) {
+//        new Thread() {
+//            public void run() {
+//                BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//                String line = null;
+//                try {
+//                    while ((line = input.readLine()) != null) {
+//                    	if(!line.trim().isEmpty()){
+//                    		if(line.contains("DEBUG"))
+//                    			logManager.debug(ProcessStatus.RUNNING, processName, line);
+//                    		else if(line.contains("ERROR"))
+//                    			logManager.error(ProcessStatus.ERROR, processName, line);
+//                    		else if(line.contains("FATAL") && !line.contains("INFO"))
+//                    			logManager.fatal(ProcessStatus.ERROR, processName, line);
+//                    		else if(line.contains("WARN"))
+//                    			logManager.warn(ProcessStatus.RUNNING, processName, line);
+//                    		else
+//                    			logManager.debug(ProcessStatus.RUNNING, processName, line);
+//                    	}
+//                    }
+//                } catch (IOException e) {
+//                	if(!(e.getMessage().contains("Stream closed")))
+//                		logManager.error(ProcessStatus.ERROR, processName, "Error reading input stream of simulator process: "+e.getMessage());
+//                }
+//            }
+//        }.start();
+//    }
 
 
     class GossFncsResponseEvent implements GossResponseEvent{

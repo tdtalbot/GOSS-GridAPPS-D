@@ -56,6 +56,7 @@ import gov.pnnl.goss.gridappsd.api.AppManager;
 import gov.pnnl.goss.gridappsd.api.LogManager;
 import gov.pnnl.goss.gridappsd.api.ServiceManager;
 import gov.pnnl.goss.gridappsd.api.SimulationManager;
+import gov.pnnl.goss.gridappsd.api.Simulator;
 import gov.pnnl.goss.gridappsd.dto.LogMessage;
 import gov.pnnl.goss.gridappsd.dto.LogMessage.LogLevel;
 import gov.pnnl.goss.gridappsd.dto.LogMessage.ProcessStatus;
@@ -103,6 +104,7 @@ public class SimulationManagerImpl implements SimulationManager{
 	LogManager logManager;
 	
 	private Map<String, SimulationContext> simContexts  = new HashMap<String, SimulationContext>();
+	private Map<String, Simulator> simulators = new HashMap<String, Simulator>();
 //	private Map<String, SimulationProcess> simProcesses = new HashMap<String, SimulationProcess>();
 	public SimulationManagerImpl(){ }
 
@@ -129,19 +131,21 @@ public class SimulationManagerImpl implements SimulationManager{
 	 * @param simulationFile
 	 */
 	@Override
-	public void startSimulation(String simulationId, SimulationConfig simulationConfig, SimulationContext simContext,  Map<String, Object> simulationContext){
-		//TODO: remove simulationContext parameter after refactoring service manager
+	public void startSimulation(String simulationId, SimulationConfig simulationConfig, SimulationContext simContext,  Map<String, Object> simulationContextParams) throws Exception{
+		//TODO: remove simulationContext parameter after re-factoring service manager 
 
 			try {
 				logManager.info(ProcessStatus.STARTING, simulationId, "Starting simulation "+simulationId);
 			} catch (Exception e2) {
 				log.warn("Error while reporting status "+e2.getMessage());
 			}
-			
+			String simulatorName = simulationConfig.getSimulator();
 			simContexts.put(simContext.getSimulationId(), simContext);
-			
+			if(!simulators.containsKey(simulatorName)){
+				throw new Exception("No simulator registered for "+simulatorName);
+			} 
 			SimulationProcess simProc = new SimulationProcess(simContext, serviceManager, 
-						simulationConfig, simulationId, logManager, appManager, client, securityConfig, simulationContext);
+						simulationConfig, simulationId, logManager, appManager, client, securityConfig, simulationContextParams, simulators.get(simulatorName));
 //			simProcesses.put(simContext.getSimulationId(), simProc);
 			simProc.start();
 	}
@@ -187,5 +191,8 @@ public class SimulationManagerImpl implements SimulationManager{
 		return this.simContexts.get(simulationId);
 	}
 	
-	
+	@Override
+	public void registerSimulator(String simulatorName, Simulator simulator){
+		this.simulators.put(simulatorName, simulator);
+	}
 }
