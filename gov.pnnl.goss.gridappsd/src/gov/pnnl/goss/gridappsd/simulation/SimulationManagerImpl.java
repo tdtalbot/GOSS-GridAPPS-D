@@ -140,6 +140,9 @@ public class SimulationManagerImpl implements SimulationManager{
 				log.warn("Error while reporting status "+e2.getMessage());
 			}
 			String simulatorName = simulationConfig.getSimulator();
+			if(simulatorName!=null){
+				simulatorName = simulatorName.toLowerCase();
+			}
 			simContexts.put(simContext.getSimulationId(), simContext);
 			if(!simulators.containsKey(simulatorName)){
 				throw new Exception("No simulator registered for "+simulatorName);
@@ -192,7 +195,12 @@ public class SimulationManagerImpl implements SimulationManager{
 	}
 	
 	@Override
-	public void registerSimulator(String simulatorName, Simulator simulator){
-		this.simulators.put(simulatorName, simulator);
+	public void registerSimulator(String simulatorName, Simulator simulator) {
+		if(simulatorName!=null && simulatorName.trim().length()>0){
+			this.simulators.put(simulatorName.toLowerCase(), simulator);
+		} else {
+			throw new RuntimeException("Simulator name cannot be empty");
+		}
+		
 	}
 }

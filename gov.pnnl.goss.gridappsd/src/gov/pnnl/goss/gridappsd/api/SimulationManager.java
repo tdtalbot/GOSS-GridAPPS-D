@@ -57,6 +57,7 @@ public interface SimulationManager {
 	 * @param simulationId
 	 * @param simulationFile
 	 * @param simulationConfig	Map<String, Object> simulationContext
+	 * @throws Exception 
 	 */
 	void registerSimulator(String simulatorName, Simulator simulator);
 	
