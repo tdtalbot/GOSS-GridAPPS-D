@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.felix.dm.annotation.api.ServiceDependency;
 import org.apache.felix.dm.annotation.api.Start;
 
+import org.apache.felix.dm.annotation.api.Component;
 import gov.pnnl.goss.gridappsd.api.LogManager;
 import gov.pnnl.goss.gridappsd.api.ServiceManager;
 import gov.pnnl.goss.gridappsd.api.SimulationManager;
@@ -18,6 +19,8 @@ import gov.pnnl.goss.gridappsd.dto.SimulationContext;
 import gov.pnnl.goss.gridappsd.dto.LogMessage.ProcessStatus;
 import gov.pnnl.goss.gridappsd.utils.RunCommandLine;
 
+
+@Component
 public class GLDSimulator extends GenericSimulator {
 	public static final String SIMULATOR_NAME = "gridlabd";
 	

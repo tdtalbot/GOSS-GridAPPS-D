@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.felix.dm.annotation.api.Component;
 import org.apache.felix.dm.annotation.api.ServiceDependency;
 import org.apache.felix.dm.annotation.api.Start;
 
@@ -22,6 +23,7 @@ import gov.pnnl.goss.gridappsd.dto.ServiceInfo;
 import gov.pnnl.goss.gridappsd.dto.SimulationConfig;
 import gov.pnnl.goss.gridappsd.utils.RunCommandLine;
 
+@Component
 public class OchreSimulator extends GenericSimulator {
 	public static final String SIMULATOR_NAME = "ochre";
     private static final String gridlabdConstant = "GridLAB-D";
