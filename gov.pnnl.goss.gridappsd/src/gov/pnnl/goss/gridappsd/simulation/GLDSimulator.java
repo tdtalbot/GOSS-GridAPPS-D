@@ -22,7 +22,7 @@ import gov.pnnl.goss.gridappsd.utils.RunCommandLine;
 
 @Component
 public class GLDSimulator extends GenericSimulator {
-	public static final String SIMULATOR_NAME = "gridlabd";
+	public static final String SIMULATOR_NAME = "gridlab-d";
 	
 	
 	@ServiceDependency
