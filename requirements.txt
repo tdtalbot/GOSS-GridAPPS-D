@@ -1,4 +1,9 @@
 # Base requirements to work with the message bus and debugging
 # of python applications.
-remote_pdb==1.2.0
-durable-rules==0.33.125
+remote_pdb
+durable-rules
+gridappsd-python
+gridappsd-field-bus
+pytest
+requests>=2.32.4  # not a direct import here, pinned to clear GHSA-9hjg-9r4m-mvj7, GHSA-9wx4-h78v-vm56, and GHSA-gc5v-m9x4-r6x2
+urllib3>=2.5.0  # not a direct import here, pinned to clear GHSA-pq67-6m6q-mj2v and later urllib3 advisories

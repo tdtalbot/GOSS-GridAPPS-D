@@ -12,9 +12,6 @@ if [ "$1" = "version" -o "$1" = "-v" -o "$1" = "--version" ]; then
   exit 0
 fi
 
-# Setup the path for running the gridappsd framework
-export PATH=/gridappsd/services/fncsgossbridge/service:$PATH
-
 cd /gridappsd
 
 # clean up log files
@@ -22,10 +19,22 @@ if [ -d /gridappsd/log ]; then
   /bin/rm -rf /gridappsd/log/* 2 > /dev/null
 fi
 
+JAVA_OPTIONS=""
+if [ "${AUTOSTART:-0}" != "0" ]; then
+  JAVA_OPTIONS=" -Dgosh.args=--nointeractive "
+fi
+
+# If OpenTelemetry Java agent is available, enable it
+if [ -f /gridappsd/otel/opentelemetry-javaagent.jar ]; then
+  JAVA_OPTIONS="$JAVA_OPTIONS -javaagent:/gridappsd/otel/opentelemetry-javaagent.jar"
+  echo "OpenTelemetry Java agent enabled"
+fi
+
 # If the DEBUG environmental variable is set and is not 0
 # then expose the port for remote debugging.
+# Note: address=*:8000 is required for Java 9+ to accept connections from outside the container
 if [ "${DEBUG:-0}" != "0" ]; then
-	java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n -jar lib/run.bnd.jar 
+	java ${JAVA_OPTIONS} -agentlib:jdwp=transport=dt_socket,server=y,address=*:8000,suspend=n -jar launcher/gridappsd-launcher.jar
 else
-	java -jar lib/run.bnd.jar
+	java ${JAVA_OPTIONS} -jar launcher/gridappsd-launcher.jar
 fi
